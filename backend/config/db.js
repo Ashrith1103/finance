@@ -11,10 +11,10 @@ const appendSslMode = (url) => {
   const trimmed = url.trim();
 
   if (/sslmode=/i.test(trimmed)) {
-    return trimmed;
+    return trimmed.replace(/sslmode=[^&]+/i, "sslmode=no-verify");
   }
 
-  return `${trimmed}${trimmed.includes("?") ? "&" : "?"}sslmode=require`;
+  return `${trimmed}${trimmed.includes("?") ? "&" : "?"}sslmode=no-verify`;
 };
 
 const databaseUrl = process.env.DATABASE_URL ? appendSslMode(process.env.DATABASE_URL) : null;
