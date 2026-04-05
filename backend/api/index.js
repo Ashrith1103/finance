@@ -3,6 +3,12 @@ let appInstance;
 let connectDatabaseFn;
 const DB_CONNECT_TIMEOUT_MS = Number(process.env.DB_CONNECT_TIMEOUT_MS || 8000);
 
+const applyCorsHeaders = (res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+};
+
 const withTimeout = (promise, timeoutMs) => {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => {
@@ -46,6 +52,13 @@ const getApp = () => {
 
 module.exports = async (req, res) => {
   try {
+    applyCorsHeaders(res);
+
+    // Always satisfy browser CORS preflight without requiring DB initialization.
+    if (req.method === "OPTIONS") {
+      return res.status(204).end();
+    }
+
     const app = getApp();
 
     // Keep health and root checks independent from DB startup status.
@@ -56,6 +69,8 @@ module.exports = async (req, res) => {
     await withTimeout(ensureDatabase(), DB_CONNECT_TIMEOUT_MS);
     return app(req, res);
   } catch (error) {
+    applyCorsHeaders(res);
+
     console.error("Vercel function startup error:", {
       message: error?.message,
       name: error?.name,
