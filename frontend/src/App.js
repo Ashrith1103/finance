@@ -1215,7 +1215,7 @@ function App() {
                   <div className="filter-bar">
                     <input
                       className="filter-input"
-                      placeholder="Search notes or category"
+                      placeholder="Search notes, category, or owner name"
                       value={recordFilters.search}
                       onChange={handleRecordFilterChange("search")}
                     />

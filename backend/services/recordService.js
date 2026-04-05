@@ -1,4 +1,4 @@
-const { Op } = require("sequelize");
+const { Op, Sequelize } = require("sequelize");
 const { Record, User } = require("../models");
 const { AppError } = require("../utils/errors");
 
@@ -40,9 +40,14 @@ const buildWhereClause = (filters) => {
   }
 
   if (filters.search) {
+    const searchText = `%${filters.search}%`;
+
     where[Op.or] = [
-      { category: { [Op.like]: `%${filters.search}%` } },
-      { notes: { [Op.like]: `%${filters.search}%` } }
+      { category: { [Op.iLike]: searchText } },
+      { notes: { [Op.iLike]: searchText } },
+      Sequelize.where(Sequelize.col("owner.name"), {
+        [Op.iLike]: searchText
+      })
     ];
   }
 
