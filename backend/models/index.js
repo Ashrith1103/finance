@@ -14,7 +14,11 @@ Record.belongsTo(User, {
 
 const connectDatabase = async () => {
   await sequelize.authenticate();
-  await sequelize.sync();
+
+  // Avoid schema sync on serverless platforms to prevent cold-start failures.
+  if (process.env.VERCEL !== "1" && process.env.DB_SYNC !== "false") {
+    await sequelize.sync();
+  }
 };
 
 module.exports = {

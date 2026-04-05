@@ -19,6 +19,12 @@ module.exports = async (req, res) => {
     await ensureDatabase();
     return app(req, res);
   } catch (error) {
+    console.error("Vercel function startup error:", {
+      message: error?.message,
+      name: error?.name,
+      code: error?.original?.code || error?.parent?.code || error?.code
+    });
+
     return res.status(500).json({
       message: "Database connection failed.",
       details: error?.message || "Unknown error"
