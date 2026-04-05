@@ -68,7 +68,7 @@ const getSummary = async ({ scope = "self", userId, currentUser }) => {
     ],
     where,
     group: ["category", "type"],
-    order: [[Sequelize.literal("totalAmount"), "DESC"]],
+    order: [[Sequelize.fn("SUM", Sequelize.col("amount")), "DESC"]],
     raw: true
   });
 
