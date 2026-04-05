@@ -2,6 +2,25 @@ const app = require("../app");
 const { connectDatabase } = require("../models");
 
 let dbReadyPromise;
+const DB_CONNECT_TIMEOUT_MS = Number(process.env.DB_CONNECT_TIMEOUT_MS || 8000);
+
+const withTimeout = (promise, timeoutMs) => {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new Error(`Database connection timed out after ${timeoutMs}ms.`));
+    }, timeoutMs);
+
+    promise
+      .then((value) => {
+        clearTimeout(timer);
+        resolve(value);
+      })
+      .catch((error) => {
+        clearTimeout(timer);
+        reject(error);
+      });
+  });
+};
 
 const ensureDatabase = async () => {
   if (!dbReadyPromise) {
@@ -15,8 +34,13 @@ const ensureDatabase = async () => {
 };
 
 module.exports = async (req, res) => {
+  // Keep health and root checks independent from DB startup status.
+  if (req.url === "/" || req.url.startsWith("/health") || req.url.startsWith("/api-docs")) {
+    return app(req, res);
+  }
+
   try {
-    await ensureDatabase();
+    await withTimeout(ensureDatabase(), DB_CONNECT_TIMEOUT_MS);
     return app(req, res);
   } catch (error) {
     console.error("Vercel function startup error:", {
