@@ -1,4 +1,6 @@
 const { Sequelize } = require("sequelize");
+require("pg");
+require("pg-hstore");
 
 const shouldUseSsl = process.env.DB_SSL !== "false";
 const appendSslMode = (url) => {
