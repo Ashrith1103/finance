@@ -1,0 +1,21 @@
+{
+  "name": "finance-backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "check": "node --check app.js && node --check server.js && node --check controllers/authController.js && node --check controllers/dashboardController.js && node --check controllers/recordController.js && node --check controllers/userController.js && node --check middleware/auth.js && node --check middleware/errorHandler.js && node --check middleware/notFound.js && node --check middleware/role.js && node --check models/FinancialRecord.js && node --check models/User.js && node --check models/index.js && node --check routes/authRoutes.js && node --check routes/dashboardRoutes.js && node --check routes/recordRoutes.js && node --check routes/userRoutes.js && node --check services/dashboardService.js && node --check services/recordService.js && node --check services/userService.js && node --check utils/asyncHandler.js && node --check utils/errors.js && node --check utils/token.js && node --check utils/validators.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "pg": "^8.13.1",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.35.0",
+    "swagger-ui-express": "^5.0.0"
+  }
+}
