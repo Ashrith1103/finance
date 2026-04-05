@@ -8,6 +8,10 @@ Backend API for a finance dashboard system with:
 - dashboard analytics and summaries
 - validation, error handling, and Swagger docs
 
+## Detailed Documentation
+
+- API reviewer guide: `docs/API_GUIDE.md`
+
 ## Tech Stack
 
 - Node.js
