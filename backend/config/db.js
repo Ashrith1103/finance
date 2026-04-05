@@ -1,11 +1,34 @@
 const { Sequelize } = require("sequelize");
 
 const shouldUseSsl = process.env.DB_SSL !== "false";
+const appendSslMode = (url) => {
+  if (!url) {
+    return url;
+  }
+
+  const trimmed = url.trim();
+
+  if (/sslmode=/i.test(trimmed)) {
+    return trimmed;
+  }
+
+  return `${trimmed}${trimmed.includes("?") ? "&" : "?"}sslmode=require`;
+};
+
+const databaseUrl = process.env.DATABASE_URL ? appendSslMode(process.env.DATABASE_URL) : null;
+
 const baseConfig = {
   dialect: "postgres",
   logging: false,
   define: {
     underscored: true
+  },
+  pool: {
+    max: Number(process.env.DB_POOL_MAX || 1),
+    min: Number(process.env.DB_POOL_MIN || 0),
+    idle: Number(process.env.DB_POOL_IDLE_MS || 10000),
+    acquire: Number(process.env.DB_POOL_ACQUIRE_MS || 30000),
+    evict: Number(process.env.DB_POOL_EVICT_MS || 1000)
   },
   dialectOptions: shouldUseSsl
     ? {
@@ -17,8 +40,8 @@ const baseConfig = {
     : {}
 };
 
-const sequelize = process.env.DATABASE_URL
-  ? new Sequelize(process.env.DATABASE_URL, baseConfig)
+const sequelize = databaseUrl
+  ? new Sequelize(databaseUrl, baseConfig)
   : new Sequelize(
       process.env.DB_NAME,
       process.env.DB_USER,
