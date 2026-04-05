@@ -1,0 +1,75 @@
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap");
+
+:root {
+  --bg-base: #08101e;
+  --bg-top: #102746;
+  --bg-bottom: #0d1a2b;
+  --panel: rgba(10, 19, 35, 0.78);
+  --panel-strong: rgba(15, 28, 48, 0.92);
+  --border: rgba(255, 255, 255, 0.1);
+  --text-strong: #f4f7fb;
+  --text-soft: rgba(244, 247, 251, 0.76);
+  --text-muted: rgba(244, 247, 251, 0.56);
+  --accent: #85f4c7;
+  --accent-deep: #52d5ab;
+  --accent-soft: #b7ffdf;
+  --shadow-soft: 0 28px 80px rgba(0, 0, 0, 0.35);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Instrument Sans", "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background:
+    radial-gradient(circle at top left, rgba(111, 197, 255, 0.18), transparent 24%),
+    radial-gradient(circle at top right, rgba(133, 244, 199, 0.16), transparent 22%),
+    linear-gradient(180deg, var(--bg-top), var(--bg-base) 34%, var(--bg-bottom));
+  background-attachment: fixed;
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: auto;
+  border-radius: 999px;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::before {
+  top: 90px;
+  right: 6%;
+  width: 220px;
+  height: 220px;
+  background: rgba(82, 213, 171, 0.16);
+}
+
+body::after {
+  bottom: 60px;
+  left: 4%;
+  width: 280px;
+  height: 280px;
+  background: rgba(111, 197, 255, 0.12);
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+button,
+input {
+  font: inherit;
+}
