@@ -1,7 +1,6 @@
-const app = require("../app");
-const { connectDatabase } = require("../models");
-
 let dbReadyPromise;
+let appInstance;
+let connectDatabaseFn;
 const DB_CONNECT_TIMEOUT_MS = Number(process.env.DB_CONNECT_TIMEOUT_MS || 8000);
 
 const withTimeout = (promise, timeoutMs) => {
@@ -23,8 +22,12 @@ const withTimeout = (promise, timeoutMs) => {
 };
 
 const ensureDatabase = async () => {
+  if (!connectDatabaseFn) {
+    ({ connectDatabase: connectDatabaseFn } = require("../models"));
+  }
+
   if (!dbReadyPromise) {
-    dbReadyPromise = connectDatabase().catch((error) => {
+    dbReadyPromise = connectDatabaseFn().catch((error) => {
       dbReadyPromise = null;
       throw error;
     });
@@ -33,13 +36,23 @@ const ensureDatabase = async () => {
   return dbReadyPromise;
 };
 
-module.exports = async (req, res) => {
-  // Keep health and root checks independent from DB startup status.
-  if (req.url === "/" || req.url.startsWith("/health") || req.url.startsWith("/api-docs")) {
-    return app(req, res);
+const getApp = () => {
+  if (!appInstance) {
+    appInstance = require("../app");
   }
 
+  return appInstance;
+};
+
+module.exports = async (req, res) => {
   try {
+    const app = getApp();
+
+    // Keep health and root checks independent from DB startup status.
+    if (req.url === "/" || req.url.startsWith("/health") || req.url.startsWith("/api-docs")) {
+      return app(req, res);
+    }
+
     await withTimeout(ensureDatabase(), DB_CONNECT_TIMEOUT_MS);
     return app(req, res);
   } catch (error) {
